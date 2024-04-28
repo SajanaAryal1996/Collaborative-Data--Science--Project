@@ -1,4 +1,4 @@
-#' @title FACTOR
+#' @title FACTOR: A Factor Analysis (EFA and CFA) Function
 #' @param data the dataset we want to conduct factor analysis/factor loading for, must be a .csv file
 #' @param model model used for Confirmatory Factor Analysis (CFA), must be a .csv file
 #' @param group_name the name/title the user wishes to give to the data being run; must be a string inside quotation marks (i.e. "Normal Hearing Data")
