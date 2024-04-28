@@ -1,0 +1,203 @@
+---
+title: "Developing the R package for factor analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Developing the R package for factor analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+Step 1: Introduction to Factor Analysis
+
+Factor analysis is a statistical method used to identify underlying factors or dimensions that explain patterns in observed variables. It is commonly employed to reduce the dimensionality of data and uncover latent structures. The technique is based on the assumption that observed variables are influenced by a smaller number of unobservable factors.
+
+There are two types of factor analysis, including confirmatory and exploratory factor analysis. In this project, we will focus on developing custom package including function for running both exploring both exploratory and confirmatory factor analysis. For, confirmatory factor analysis we will include include function for calculating factor loadings, cronbach alpha value and model fit. Whereas, for exploratory factor analysis, we will include fucntion for calculating factor loadings for individuals items and cronbach alpha.
+
+
+
+Assumptions of Factor Analysis:
+
+Data Characteristics: Factor analysis assumes the absence of outliers, a sufficient sample size (where the number of cases exceeds the number of variables), and interval-level data measurement.
+
+Statistical Assumptions: Perfect multicollinearity among variables should be absent. Additionally, although the model assumes linearity, non-linear variables can be transformed to meet this requirement.
+
+
+Step 2: Background of the Data
+
+The dataset used in this project involves the validation of the Hearing Handicap Inventory for Adults - Screening Version (HHIA-S) questionnaire in the Nepali language. This questionnaire is commonly used to assess hearing impairment among adult populations over short periods. While translations of the questionnaire exist in various languages, including Indian, Swedish, and Spanish, there is a lack of a Nepali version. Therefore, the data collection aimed to validate the translated questionnaire among both hearing-impaired and normal-hearing populations.
+
+Both exploratory and confirmatory factor analyses were conducted on the dataset. Factor loadings, which represent the correlation between variables and factors, played a crucial role in these analyses.Factor loadings were calculated for each items in the dataset. A factor loading of 0.5 or higher typically indicates that the factor sufficiently captures the variance of the variable. 
+
+Additionally, Cronbach's alpha value were calculated for each datasets. Cronbach's alpha measures the internal consistency of the scale or set of variables. A value closer to 1 indicates higher internal consistency
+
+```{r}
+#exploratory factor analysis
+# Load required library, for exploratory factor analysis psych library is required (psych for both cronbach's alpha and EFA)
+
+library(psych)
+
+# Load data for normal hearing individuals and hearing impaired population
+normal_hearing_data <- read.csv("NH_DATA.csv")
+hearing_impaired_data <- read.csv("HI_DATA.csv")
+
+# Define the questionnaire items for each group based on the column names
+questionnaire_items <- c("E1", "E2", "S3", "E4", "S5", "S6", "E7", "S8", "E9", "S10")
+
+# Define a function to calculate Cronbach's alpha and factor loadings for each group
+calculate_alpha_and_loadings <- function(data, group_name) {
+  # Select numeric variables
+  numeric_data <- data[sapply(data, is.numeric)]
+  
+  # Perform factor analysis
+  factor_analysis <- fa(numeric_data, nfactors = 1, rotate = "varimax")
+  
+  # Extract factor loadings
+  factor_loadings <- factor_analysis$loadings
+  
+  # Print factor loadings
+  print(paste("Factor Loadings for", group_name))
+  print(factor_loadings)
+  
+  # Calculate Cronbach's alpha for all questionnaire items
+  cronbach_alpha <- alpha(numeric_data)$total$raw_alpha
+  
+  # Print Cronbach's alpha
+  print(paste("Cronbach's Alpha for", group_name, ":", cronbach_alpha))
+}
+
+# Calculate Cronbach's alpha and factor loadings for normal hearing group
+calculate_alpha_and_loadings(normal_hearing_data[questionnaire_items], "Normal Hearing")
+
+# Calculate Cronbach's alpha and factor loadings for hearing impaired group
+calculate_alpha_and_loadings(hearing_impaired_data[questionnaire_items], "Hearing Impaired")
+
+```
+
+```{r}
+#Perform confirmatory factor analysis
+#for CFA and Cronbach's alpha, both lavaan and psych are required (Cronbach's alpha  required psych)
+# Load required libraries
+library(lavaan)
+library(psych)
+
+# Load data for normal hearing individuals and hearing impaired population
+normal_hearing_data <- read.csv("NH_DATA.csv")
+hearing_impaired_data <- read.csv("HI_DATA.csv")
+
+# Define the questionnaire items for each group based on the column names
+questionnaire_items <- c("E1", "E2", "S3", "E4", "S5", "S6", "E7", "S8", "E9", "S10")
+
+# Define a function to perform confirmatory factor analysis (CFA) and calculate Cronbach's alpha and factor loadings for each group
+perform_CFA <- function(data, group_name) {
+  # Define the CFA model
+  model <- '
+    # Define latent variable
+    factor =~ E1 + E2 + S3 + E4 + S5 + S6 + E7 + S8 + E9 + S10
+  '
+  
+  # Perform CFA
+  fit <- lavaan::cfa(model, data = data, std.lv = TRUE)
+  print(fit)
+  # Print standardized factor loadings
+  print(paste("Standardized Factor Loadings for", group_name))
+  print(inspect(fit, "std")$lambda)
+  
+  # Extract standardized factor loadings
+  factor_loadings <- inspect(fit, "std")$lambda
+  
+  # Calculate Cronbach's alpha for all questionnaire items
+  cronbach_alpha <- alpha(data)$total$raw_alpha
+  
+  # Print Cronbach's alpha
+  print(paste("Cronbach's Alpha for", group_name, ":", cronbach_alpha))
+}
+
+# Perform confirmatory factor analysis and Cronbach's alpha for normal hearing group
+perform_CFA(normal_hearing_data[questionnaire_items], "Normal Hearing")
+
+# Perform confirmatory factor analysis and Cronbach's alpha for hearing impaired group
+perform_CFA(hearing_impaired_data[questionnaire_items], "Hearing Impaired")
+
+```
+
+
+Step 3: Develeloping  the Custom R Package
+ We create a custom R package that includes functions for both exploratory and confirmatory factor analysis. These functions will streamline the process of conducting factor analysis for users.
+
+```{r setup}
+library(FACTOR)
+library(dplyr)
+```
+
+
+
+Step 4: Performing Confirmatory Factor Analysis using the custom created package "FACTOR" (includes  factor loadings and Cronbach's alpha, and model fit)
+
+Load dataset
+```{r}
+normal_hearing_data <- read.csv("NH_DATA.csv")
+hearing_impaired_data <- read.csv("HI_DATA.csv")
+```
+
+
+```{r, warning=FALSE}
+questionnaire_items <- c("E1","E2","S3","E4","S5","S6","E7","S8", "E9", "S10")
+```
+
+
+Check CFA factor loadings
+
+```{r}
+model <- 
+   " # Define latent variable
+    factor =~ E1 + E2 + S3 + E4 + S5 + S6 + E7 + S8 + E9 + S10
+    "
+get_loadings_model(model, normal_hearing_data[questionnaire_items], "Normal Hearing")
+get_loadings_model(model, hearing_impaired_data[questionnaire_items], "Hearing Impaired")
+```
+Check Cronbach's Alpha value
+
+```{r,warning=FALSE}
+model <- 
+   " # Define latent variable
+    factor =~ E1 + E2 + S3 + E4 + S5 + S6 + E7 + S8 + E9 + S10
+    "
+  get_alpha_model(model, normal_hearing_data[questionnaire_items], "Normal Hearing")
+  get_alpha_model(model, hearing_impaired_data[questionnaire_items], "Hearing Impaired")
+```
+
+Check Model's fit
+
+```{r}
+model <- 
+   " # Define latent variable
+    factor =~ E1 + E2 + S3 + E4 + S5 + S6 + E7 + S8 + E9 + S10
+    "
+handy_fit(model, normal_hearing_data[questionnaire_items])
+handy_fit(model, hearing_impaired_data[questionnaire_items])
+pick_check(model, normal_hearing_data[questionnaire_items])
+pick_check(model, hearing_impaired_data[questionnaire_items])
+```
+
+
+Step 5: Performing exploratory Factor Analysis using the custom created package "FACTOR" (includes  factor loadings and Cronbach's alpha)
+```{r}
+get_loadings(normal_hearing_data[questionnaire_items], "Normal Hearing")
+get_loadings(hearing_impaired_data[questionnaire_items], "Hearing Impaired")
+
+get_alpha(normal_hearing_data[questionnaire_items], "Normal Hearing")
+get_alpha(hearing_impaired_data[questionnaire_items], "Hearing Imapired")
+```
+
+Step 6: Comparision of workflow using original Lavaan and psych package, and custom FACTOR package
+
+The result of factor loadings, cronbach's alpha , and models fit for included datset is same using original package and custom made package. Hence, this proves we successfully created the custom package called "FACTOR".
