@@ -1,9 +1,10 @@
-#’@FACTOR
-#’@does exploratory factor analysis for two group and calculate cronbach alpha value
-#’@param - Factor analysis is used for dimension reduction
-#’@keywords - Aplha, cronbach, factor
-#’ @export - makes the function available for others to use when your package is loaded
-#’@examples - sample code
+#' @title FACTOR
+#' @param data the dataset we want to coduct factor analysis/factor loading for, must be a .csv file
+#' @param model model used for Confirmatory Factor Analysis (CFA), must be a .csv file
+#' @param group_name the second dataset for comparison, must be a .csv file
+#' @keywords alpha, cronbach, factor analysis, factor loading
+#' @export
+#' @examples:
 
 get_loadings <- function(data, group_name) {
   numeric_data <- data[sapply(data, is.numeric)]
