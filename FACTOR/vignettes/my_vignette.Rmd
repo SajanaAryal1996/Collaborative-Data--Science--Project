@@ -20,7 +20,7 @@ Step 1: Introduction to Factor Analysis
 
 Factor analysis is a statistical method used to identify underlying factors or dimensions that explain patterns in observed variables. It is commonly employed to reduce the dimensionality of data and uncover latent structures. The technique is based on the assumption that observed variables are influenced by a smaller number of unobservable factors.
 
-There are two types of factor analysis, including confirmatory and exploratory factor analysis. In this project, we will focus on developing custom package including function for running both exploring both exploratory and confirmatory factor analysis. For, confirmatory factor analysis we will include include function for calculating factor loadings, cronbach alpha value and model fit. Whereas, for exploratory factor analysis, we will include fucntion for calculating factor loadings for individuals items and cronbach alpha.
+There are two types of factor analysis, including confirmatory and exploratory factor analysis. In this project, we will focus on developing custom package including function for running both exploring both exploratory and confirmatory factor analysis. For, confirmatory factor analysis we will include include function for calculating factor loadings, cronbach alpha value and model fit. Whereas, for exploratory factor analysis, we will include function for calculating factor loadings for individuals items and cronbach alpha.
 
 
 
@@ -33,7 +33,7 @@ Statistical Assumptions: Perfect multicollinearity among variables should be abs
 
 Step 2: Background of the Data
 
-The dataset used in this project involves the validation of the Hearing Handicap Inventory for Adults - Screening Version (HHIA-S) questionnaire in the Nepali language. This questionnaire is commonly used to assess hearing impairment among adult populations over short periods. While translations of the questionnaire exist in various languages, including Indian, Swedish, and Spanish, there is a lack of a Nepali version. Therefore, the data collection aimed to validate the translated questionnaire among both hearing-impaired and normal-hearing populations.
+The dataset used in this project involves the validation of the Hearing Handicap Inventory for Adults - Screening Version (HHIA-S) questionnaire in the Nepali language. This questionnaire is commonly used to assess hearing impairment among adult populations over short periods. While translations of the questionnaire exist in various languages, including Indian, Swedish, and Spanish, there is a lack of a Nepali version. Therefore, the data collection aimed to validate the translated questionnaire among both hearing-impaired and normal-hearing populations (N = 50 (HI), N = 70(NH))
 
 Both exploratory and confirmatory factor analyses were conducted on the dataset. Factor loadings, which represent the correlation between variables and factors, played a crucial role in these analyses.Factor loadings were calculated for each items in the dataset. A factor loading of 0.5 or higher typically indicates that the factor sufficiently captures the variance of the variable. 
 
@@ -201,3 +201,12 @@ get_alpha(hearing_impaired_data[questionnaire_items], "Hearing Imapired")
 Step 6: Comparision of workflow using original Lavaan and psych package, and custom FACTOR package
 
 The result of factor loadings, cronbach's alpha , and models fit for included datset is same using original package and custom made package. Hence, this proves we successfully created the custom package called "FACTOR".
+
+References:
+-Kline, P. (2014). An easy guide to factor analysis. Routledge. 
+-Flora, D. B., LaBrish, C., & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for exploratory and confirmatory factor analysis. Frontiers in Psychology, 3, 55. 
+-Thompson, B. (2004). Exploratory and confirmatory factor analysis: Understanding concepts and applications. Washington, DC, 10694(000), 3.
+-Tavakol, M., & Dennick, R. (2011). Making sense of Cronbach's alpha. Int J Med Educ, 2, 53-55. https://doi.org/10.5116/ijme.4dfb.8dfd 
+
+
+
