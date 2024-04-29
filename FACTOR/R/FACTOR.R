@@ -5,17 +5,17 @@
 #’ @export - makes the function available for others to use when your package is loaded
 #’@examples - sample code
 
-get_loadings <- function(data, group_name) {
+get_loadings <- function(data, n, group_name) {
   numeric_data <- data[sapply(data, is.numeric)]
-  factor_analysis <- psych::fa(numeric_data, nfactors = 1, rotate = "varimax")
+  factor_analysis <- psych::fa(numeric_data, nfactors = n, rotate = "varimax")
   factor_loadings <- factor_analysis$loadings
   print(paste("Factor Loadings for", group_name))
   print(factor_loadings)
 }
 
-get_alpha <- function(data, group_name) {
+get_alpha <- function(data, n, group_name) {
   numeric_data <- data[sapply(data, is.numeric)]
-  factor_analysis <- psych::fa(numeric_data, nfactors = 1, rotate = "varimax")
+  factor_analysis <- psych::fa(numeric_data, nfactors = n, rotate = "varimax")
   factor_loadings <- factor_analysis$loadings
   cronbach_alpha <- psych::alpha(numeric_data)$total$raw_alpha
   print(paste("Cronbach's Alpha for", group_name, ":", cronbach_alpha))
@@ -36,17 +36,7 @@ get_alpha_model <- function(model_input, data_input, group_name) {
   print(paste("Cronbach's Alpha for", group_name, ":", cronbach_alpha))
 }
 
-included_sample <- function(data, qlist, rate) {
-  temp <- as.data.frame(is.na(data[qlist])*1)
-  temp <- temp %>%
-    dplyr::mutate(na.sum = rowSums(.)) %>%
-    dplyr::mutate(perc = 1-na.sum/length(qlist)) %>%
-    dplyr::select(perc)
-  temp2 <- dplyr::bind_cols(data, temp)
-  final <- temp2[temp2$perc >= rate,] %>%
-    dplyr::select(-perc)
-  return(final)
-}
+
 
 handy_fit <- function(model_input, data_input) {
   model <- paste(model_input)
@@ -69,3 +59,6 @@ pick_check <- function(test, data) {
   else
     return("Check typo")
 }
+
+
+

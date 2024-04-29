@@ -33,7 +33,7 @@ Statistical Assumptions: Perfect multicollinearity among variables should be abs
 
 Step 2: Background of the Data
 
-The dataset used in this project involves the validation of the Hearing Handicap Inventory for Adults - Screening Version (HHIA-S) questionnaire in the Nepali language. This questionnaire is commonly used to assess hearing impairment among adult populations over short periods. While translations of the questionnaire exist in various languages, including Indian, Swedish, and Spanish, there is a lack of a Nepali version. Therefore, the data collection aimed to validate the translated questionnaire among both hearing-impaired and normal-hearing populations (N = 50 (HI), N = 70(NH))
+The dataset used in this project involves the validation of the Hearing Handicap Inventory for Adults - Screening Version (HHIA-S) questionnaire in the Nepali language. This questionnaire is commonly used to assess hearing impairment among adult populations over short periods. While translations of the questionnaire exist in various languages, including Indian, Swedish, and Spanish, there is a lack of a Nepali version. Therefore, the data collection aimed to validate the translated questionnaire among both hearing-impaired and normal-hearing populations (N = 50(HI), N = 70(NH))
 
 Both exploratory and confirmatory factor analyses were conducted on the dataset. Factor loadings, which represent the correlation between variables and factors, played a crucial role in these analyses.Factor loadings were calculated for each items in the dataset. A factor loading of 0.5 or higher typically indicates that the factor sufficiently captures the variance of the variable. 
 
@@ -42,12 +42,24 @@ Additionally, Cronbach's alpha value were calculated for each datasets. Cronbach
 ```{r}
 #exploratory factor analysis
 # Load required library, for exploratory factor analysis psych library is required (psych for both cronbach's alpha and EFA)
-
+new_pkg <- c("tidyverse", "dplyr", "psych", "lavaan")
+not_installed <- new_pkg[!new_pkg %in% rownames(installed.packages())]
+if (length(not_installed) > 0) install.packages(not_installed) 
 library(psych)
+library(dplyr)
+library(tidyverse)
 
 # Load data for normal hearing individuals and hearing impaired population
 normal_hearing_data <- read.csv("NH_DATA.csv")
 hearing_impaired_data <- read.csv("HI_DATA.csv")
+
+#Clear empty observations. After this process the observations of two data frames matches the numbers of participants (N = 50(HI), N = 70(NH))
+normal_hearing_data <- normal_hearing_data %>%
+  select(-X) %>%
+  drop_na(Age)
+hearing_impaired_data <- hearing_impaired_data %>%
+  select(-X) %>%
+  drop_na(Age)
 
 # Define the questionnaire items for each group based on the column names
 questionnaire_items <- c("E1", "E2", "S3", "E4", "S5", "S6", "E7", "S8", "E9", "S10")
@@ -68,7 +80,7 @@ calculate_alpha_and_loadings <- function(data, group_name) {
   print(factor_loadings)
   
   # Calculate Cronbach's alpha for all questionnaire items
-  cronbach_alpha <- alpha(numeric_data)$total$raw_alpha
+  cronbach_alpha <- psych::alpha(numeric_data)$total$raw_alpha
   
   # Print Cronbach's alpha
   print(paste("Cronbach's Alpha for", group_name, ":", cronbach_alpha))
@@ -93,6 +105,14 @@ library(psych)
 normal_hearing_data <- read.csv("NH_DATA.csv")
 hearing_impaired_data <- read.csv("HI_DATA.csv")
 
+#Clear empty observations. After this process the observations of two data frames matches the numbers of participants (N = 50(HI), N = 70(NH))
+normal_hearing_data <- normal_hearing_data %>%
+  select(-X) %>%
+  drop_na()
+hearing_impaired_data <- hearing_impaired_data %>%
+  select(-X) %>%
+  drop_na()
+
 # Define the questionnaire items for each group based on the column names
 questionnaire_items <- c("E1", "E2", "S3", "E4", "S5", "S6", "E7", "S8", "E9", "S10")
 
@@ -115,7 +135,7 @@ perform_CFA <- function(data, group_name) {
   factor_loadings <- inspect(fit, "std")$lambda
   
   # Calculate Cronbach's alpha for all questionnaire items
-  cronbach_alpha <- alpha(data)$total$raw_alpha
+  cronbach_alpha <- psych::alpha(data)$total$raw_alpha
   
   # Print Cronbach's alpha
   print(paste("Cronbach's Alpha for", group_name, ":", cronbach_alpha))
@@ -131,21 +151,38 @@ perform_CFA(hearing_impaired_data[questionnaire_items], "Hearing Impaired")
 
 
 Step 3: Develeloping  the Custom R Package
- We create a custom R package that includes functions for both exploratory and confirmatory factor analysis. These functions will streamline the process of conducting factor analysis for users.
+We create a custom R package that includes functions for both exploratory and confirmatory factor analysis. These functions will streamline the process of conducting factor analysis for users.
+
+
 
 ```{r setup}
 library(FACTOR)
 library(dplyr)
+library(tidyverse)
 ```
 
+Step 4: Preparing for analysis
+We created a function `pick_check()` which intake two arguments: data and the type of test for checking whether the data is appropriate for FA. For example, we can input `"KMO"` to see the result of KMO test.
+```{r}
+pick_check("KMO", hearing_impaired_data[questionnaire_items])
+```
+```{r}
+pick_check("Bartlett", normal_hearing_data[questionnaire_items])
+```
+The results states the data seem appropriate for FA.
 
+Step 5: Performing Confirmatory Factor Analysis using the custom created package "FACTOR" (includes  factor loadings and Cronbach's alpha, and model fit)
 
-Step 4: Performing Confirmatory Factor Analysis using the custom created package "FACTOR" (includes  factor loadings and Cronbach's alpha, and model fit)
-
-Load dataset
+Load dataset and clean empty observations
 ```{r}
 normal_hearing_data <- read.csv("NH_DATA.csv")
 hearing_impaired_data <- read.csv("HI_DATA.csv")
+normal_hearing_data <- normal_hearing_data %>%
+  select(-X) %>%
+  drop_na()
+hearing_impaired_data <- hearing_impaired_data %>%
+  select(-X) %>%
+  drop_na()
 ```
 
 
@@ -171,8 +208,8 @@ model <-
    " # Define latent variable
     factor =~ E1 + E2 + S3 + E4 + S5 + S6 + E7 + S8 + E9 + S10
     "
-  get_alpha_model(model, normal_hearing_data[questionnaire_items], "Normal Hearing")
-  get_alpha_model(model, hearing_impaired_data[questionnaire_items], "Hearing Impaired")
+get_alpha_model(model, normal_hearing_data[questionnaire_items], "Normal Hearing")
+get_alpha_model(model, hearing_impaired_data[questionnaire_items], "Hearing Impaired")
 ```
 
 Check Model's fit
@@ -184,29 +221,58 @@ model <-
     "
 handy_fit(model, normal_hearing_data[questionnaire_items])
 handy_fit(model, hearing_impaired_data[questionnaire_items])
-pick_check(model, normal_hearing_data[questionnaire_items])
-pick_check(model, hearing_impaired_data[questionnaire_items])
+```
+Here are some fit statistics introduction and their reference levels (Maindal et al. 2012):
+
+- `Chi-squared goodness-of-fit statistic` assesses the discrepancy between the sample and fitted covariance matrix (the null hypothesis is that the model fits the data. An insignificant test indicates good fit (`P-value` above 0.1). P-values of this model for two data sets do not indicate good fits. 
+
+- `Comparative fit index (CFI)` assesses fit relative to a null model and ranges from 0 to 1 with values of 0.90–0.95 indicating acceptable and over 0.95 good fit. For this model, CFI indicates acceptable fits.
+
+- `Tucker Lewis index (TLI)` adjusts for the number of model parameters and is interpreted as CFI.
+
+- `Root mean square error of approximation (RMSEA)` expresses the lack of fit per degree of freedom of the model. Values are interpreted as follows: =<0.05 indicates very good, 0.05–0.08 good and >=0.10 poor fit. For this model, RMSEAs indicate poor fits.
+
+- `Standardized root mean square residual (SRMR)` is the average of the differences between the observed and predicted correlations and has a range from 0 to 1. Values of <0.08 indicate good fit. For this model, SRMRs indicate good fits.
+
+Step 7: Performing exploratory Factor Analysis using the custom created package "FACTOR" (includes  factor loadings and Cronbach's alpha, and model comparison)
+```{r}
+get_loadings(normal_hearing_data[questionnaire_items], 1, "Normal Hearing")
+get_loadings(hearing_impaired_data[questionnaire_items], 1, "Hearing Impaired")
+
+get_alpha(normal_hearing_data[questionnaire_items], 1, "Normal Hearing")
+get_alpha(hearing_impaired_data[questionnaire_items], 1, "Hearing Imapired")
 ```
 
+We might want to compare between model fits. By changing the second argument in in the functions in the chunk above could help with exploration. On the other hand, we could write two models and compare between the fits using `compare_fit()` function, which intake two models as the first two arguments and the data as the third argument.
 
-Step 5: Performing exploratory Factor Analysis using the custom created package "FACTOR" (includes  factor loadings and Cronbach's alpha)
+For these datasets, we don't necessarily need to test other models due to the nature of the datasets. Here we just randomly write a second function as an example to demonstrate the function.
 ```{r}
-get_loadings(normal_hearing_data[questionnaire_items], "Normal Hearing")
-get_loadings(hearing_impaired_data[questionnaire_items], "Hearing Impaired")
+model_test <- "
+    # Define latent variable
+factor1 =~ E1 + E2 + S3 + E4 + S5 + S6 + E7 + S8
+factor2 =~ E9 + S10
+  "
+```
 
-get_alpha(normal_hearing_data[questionnaire_items], "Normal Hearing")
-get_alpha(hearing_impaired_data[questionnaire_items], "Hearing Imapired")
+```{r}
+compare_fit(model, model_test, hearing_impaired_data[questionnaire_items])
 ```
 
 Step 6: Comparision of workflow using original Lavaan and psych package, and custom FACTOR package
 
-The result of factor loadings, cronbach's alpha , and models fit for included datset is same using original package and custom made package. Hence, this proves we successfully created the custom package called "FACTOR".
+The results of factor loadings, cronbach's alpha , and models fit for included datset is same using original package and custom made package. Hence, this proves we successfully created the custom package called "FACTOR". We bundled several functions from r packages focusing on FA and also included some created custom ones which helps us extract information/statistics in our FA.
 
 References:
--Kline, P. (2014). An easy guide to factor analysis. Routledge. 
--Flora, D. B., LaBrish, C., & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for exploratory and confirmatory factor analysis. Frontiers in Psychology, 3, 55. 
--Thompson, B. (2004). Exploratory and confirmatory factor analysis: Understanding concepts and applications. Washington, DC, 10694(000), 3.
--Tavakol, M., & Dennick, R. (2011). Making sense of Cronbach's alpha. Int J Med Educ, 2, 53-55. https://doi.org/10.5116/ijme.4dfb.8dfd 
+
+- Kline, P. (2014). An easy guide to factor analysis. Routledge.
+
+- Flora, D. B., LaBrish, C., & Chalmers, R. P. (2012). Old and new ideas for data screening and assumption testing for exploratory and confirmatory factor analysis. Frontiers in Psychology, 3, 55. 
+
+- Maindal, H. T., Sokolowski, I., & Vedsted, P. (2012). Adaptation, data quality and confirmatory factor analysis of the Danish version of the PACIC questionnaire. The European Journal of Public Health, 22(1), 31-36.
+
+- Tavakol, M., & Dennick, R. (2011). Making sense of Cronbach's alpha. Int J Med Educ, 2, 53-55. https://doi.org/10.5116/ijme.4dfb.8dfd 
+
+- Thompson, B. (2004). Exploratory and confirmatory factor analysis: Understanding concepts and applications. Washington, DC, 10694(000), 3.
 
 
 
