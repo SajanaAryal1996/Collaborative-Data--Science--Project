@@ -1,9 +1,16 @@
-#’@FACTOR
-#’@does exploratory factor analysis and confirmatory factor analysis for two group and calculate cronbach alpha value
-#’@param - Factor analysis is used for dimension reduction
-#’@keywords - Aplha, cronbach, factor
-#’ @export - makes the function available for others to use when your package is loaded
-#’@examples - sample code
+#' @title FACTOR- a complete package for Exploratory and Confirmatory Factor Analysis
+#' @param data the dataset you would like to conduct analysis on, must be stored as a .csv file
+#' @param data_input the dataset you would like to conduct analysis on (like the 'data' param), must be stored as a .csv file
+#' @param n the number of factors desired for Exploratory Factor Analysis (EFA); standard value for this is 1, but customize as needed
+#' @param model_input the model used for comparison in Confirmatory Factor Analysis (CFA)
+#' @param group_name title you would like to give to the dataset that you are analyzing, must be entered as a character string, in quotation marks (i.e. "Normal Hearing Data")
+#' @param model_1 1st model input for comparison fit
+#' @param model_2 2nd model input for comparison fit
+#' @param test which test you would like to use for determining whether a dataset is suitable for factor analysis, must be entered as a character string inside quotation marks (i.e. "KMO", "Kaiser, Meyer, Olkin", "Kaiser", "Meyer", "Olkin")
+#' @keywords factor analysis, cronbach's alpha
+#' @export 
+#' @examples: get_loadings(NH_data, 1, "Normal Hearing Data")
+
 
 get_loadings <- function(data, n, group_name) {
   numeric_data <- data[sapply(data, is.numeric)]
