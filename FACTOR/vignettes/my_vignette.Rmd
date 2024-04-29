@@ -48,7 +48,9 @@ if (length(not_installed) > 0) install.packages(not_installed)
 library(psych)
 library(dplyr)
 library(tidyverse)
+```
 
+```{r}
 # Load data for normal hearing individuals and hearing impaired population
 normal_hearing_data <- read.csv("NH_DATA.csv")
 hearing_impaired_data <- read.csv("HI_DATA.csv")
@@ -61,6 +63,14 @@ hearing_impaired_data <- hearing_impaired_data %>%
   select(-X) %>%
   drop_na(Age)
 
+# Some "visualization" of the data
+str(normal_hearing_data)
+str(hearing_impaired_data)
+head(normal_hearing_data)
+head(hearing_impaired_data)
+```
+
+```{r}
 # Define the questionnaire items for each group based on the column names
 questionnaire_items <- c("E1", "E2", "S3", "E4", "S5", "S6", "E7", "S8", "E9", "S10")
 
