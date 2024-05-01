@@ -35,7 +35,20 @@ Step 2: Background of the Data
 
 The dataset used in this project involves the validation of the Hearing Handicap Inventory for Adults - Screening Version (HHIA-S) questionnaire in the Nepali language. This questionnaire is commonly used to assess hearing impairment among adult populations over short periods. While translations of the questionnaire exist in various languages, including Indian, Swedish, and Spanish, there is a lack of a Nepali version. Therefore, the data collection aimed to validate the translated questionnaire among both hearing-impaired and normal-hearing populations (N = 50(HI), N = 70(NH))
 
-Both exploratory and confirmatory factor analyses were conducted on the dataset. Factor loadings, which represent the correlation between variables and factors, played a crucial role in these analyses.Factor loadings were calculated for each items in the dataset. A factor loading of 0.5 or higher typically indicates that the factor sufficiently captures the variance of the variable. 
+![**Figure 1 HHIA-S.**](../vignettes/images/Questionnaire.png)
+Prior to this paper (Aryal et al., 2022), there was no standardized Nepali translation of the HHIA-S questionnaire (originally in English). Factor analyses help to answer the questions, whether we could put the translation of the HHIA-S into use or not, and whether we could further use the data based on this questionnaire, the underlying structure and the way results are generated.
+
+Both exploratory and confirmatory factor analyses were conducted on the dataset. 
+
+To put it simply, CFA may help to validate questionnaire with clear theoretical background, and structure and dimensions of the questions. For example, for the data set we use, it is adapted from a questionnaire being developed in many languages, and it is also concise, the main goal will be validating it so that Nepali language speaker could use this tool. If it is validated with CFA, future researches could be conducted based on this questionnaire as well in addition to informal use.
+
+For an EFA, we assume that we are uncertain about the underlying structure and dimensions between the observed factors, namely questions. That is why in some current packages on FA, sometimes we do not have to directly input a model in the function. On the other hand, for a questionnaire with given structure, we could also suspect there is another competing theory, thus running comparison between two given models and decide which one is a better fit.
+
+In real life, whether to perform CFA and EFA is a case-by-case decision based on the nature of and the work done for the questionnaire. A combination of CFA and EFA is also possible in analysis. Other procedures may be involved in addition to FA to validating questionnaires, e.g., in a linguistic/cultural adaptation of existing questionnaire, forming a panel (a bunch of people) to examine the questionnaire.
+
+In our example, we try to use current packages to extract results of our interest in both EFA and CFA for demonstration purpose:
+
+Factor loadings, which represent the correlation between variables and factors, played a crucial role in these analyses.Factor loadings were calculated for each items in the dataset. A factor loading of 0.5 or higher typically indicates that the factor sufficiently captures the variance of the variable. 
 
 Additionally, Cronbach's alpha value were calculated for each datasets. Cronbach's alpha measures the internal consistency of the scale or set of variables. A value closer to 1 indicates higher internal consistency
 
@@ -161,9 +174,7 @@ perform_CFA(hearing_impaired_data[questionnaire_items], "Hearing Impaired")
 
 
 Step 3: Develeloping  the Custom R Package
-We create a custom R package that includes functions for both exploratory and confirmatory factor analysis. These functions will streamline the process of conducting factor analysis for users.
-
-
+As we can see above, the current FA functions (handy ones for dummies), may exist in different packages. We create a custom R package that includes functions for both exploratory and confirmatory factor analysis. These functions will streamline the process of conducting factor analysis for users.
 
 ```{r setup}
 library(FACTOR)
@@ -179,7 +190,7 @@ pick_check("KMO", hearing_impaired_data[questionnaire_items])
 ```{r}
 pick_check("Bartlett", normal_hearing_data[questionnaire_items])
 ```
-The results states the data seem appropriate for FA.
+The results states that both datasets seem appropriate for FA.
 
 Step 5: Performing Confirmatory Factor Analysis using the custom created package "FACTOR" (includes  factor loadings and Cronbach's alpha, and model fit)
 
@@ -273,6 +284,8 @@ Step 6: Comparision of workflow using original Lavaan and psych package, and cus
 The results of factor loadings, cronbach's alpha , and models fit for included datset is same using original package and custom made package. Hence, this proves we successfully created the custom package called "FACTOR". We bundled several functions from r packages focusing on FA and also included some created custom ones which helps us extract information/statistics in our FA.
 
 References:
+
+- Aryal, S., Bhattarai, B., & Prabhu, P. (2022). Development and Standardization of Hearing Handicap Inventory for Adult (Screening Version) in Nepali Language. Indian Journal of Otolaryngology and Head & Neck Surgery, 74(Suppl 3), 4409-4414.
 
 - Kline, P. (2014). An easy guide to factor analysis. Routledge.
 
