@@ -15,7 +15,7 @@ pick_check(test, data)
 FACTOR- a complete package for Exploratory and Confirmatory Factor Analysis
 }
 \examples{
-: get_loadings(NH_data, "KMO")
+: get_loadings("KMO", NH_data)
 }
 \keyword{alpha,}
 \keyword{analysis,}

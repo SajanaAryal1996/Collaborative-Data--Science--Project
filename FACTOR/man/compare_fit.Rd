@@ -15,5 +15,5 @@ compare_fit(model_1, model_2, data)
 FACTOR- a complete package for Exploratory and Confirmatory Factor Analysis
 }
 \examples{
-: compare_fit(model1, model2)
+: compare_fit(model1, model2, NH_data)
 }
