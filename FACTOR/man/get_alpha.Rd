@@ -13,21 +13,11 @@ get_alpha(data, n, group_name)
 
 \item{group_name}{title you would like to give to the dataset that you are analyzing, must be entered as a character string, in quotation marks (i.e. "Normal Hearing Data")}
 
-\item{data_input}{the dataset you would like to conduct analysis on (like the 'data' param), must be stored as a .csv file}
-
-\item{model_input}{the model used for comparison in Confirmatory Factor Analysis (CFA)}
-
-\item{model_1}{1st model input for comparison fit}
-
-\item{model_2}{2nd model input for comparison fit}
-
-\item{test}{which test you would like to use for determining whether a dataset is suitable for factor analysis, must be entered as a character string inside quotation marks (i.e. "KMO", "Kaiser, Meyer, Olkin", "Kaiser", "Meyer", "Olkin")}
-}
 \description{
 FACTOR- a complete package for Exploratory and Confirmatory Factor Analysis
 }
 \examples{
-: get_loadings(NH_data, 1, "Normal Hearing Data")
+: get_alpha(NH_data, 1, "Normal Hearing Data")
 }
 \keyword{alpha}
 \keyword{analysis,}
