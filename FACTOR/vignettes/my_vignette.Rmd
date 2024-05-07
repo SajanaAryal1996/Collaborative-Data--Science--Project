@@ -67,7 +67,8 @@ library(tidyverse)
 # Load data for normal hearing individuals and hearing impaired population
 normal_hearing_data <- read.csv("NH_DATA.csv")
 hearing_impaired_data <- read.csv("HI_DATA.csv")
-
+usethis::use_data(normal_hearing_data, overwrite = TRUE) #creates .rda file for the data
+usethis::use_data(hearing_impaired_data, overwrite = TRUE)
 #Clear empty observations. After this process the observations of two data frames matches the numbers of participants (N = 50(HI), N = 70(NH))
 normal_hearing_data <- normal_hearing_data %>%
   select(-X) %>%
